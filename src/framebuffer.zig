@@ -1,11 +1,8 @@
 const std = @import("std");
 const rl = @import("raylib_c.zig").raylib;
 
-/// El framebuffer del juego. La resolucion interna (width x height) es la
-/// resolucion de la CUADRICULA del juego (una celda = un pixel de `image`).
-/// Al dibujar en pantalla, esa imagen chiquita se escala hasta llenar una
-/// ventana mas grande (window_width x window_height), usando filtro POINT
-/// para que cada celda se vea como un bloque solido y nitido.
+/// El framebuffer del juego. (width x height) es la resolucion de la cuadricula del game (una celda = un pixel de `image`).
+///Ahora bien  al dibujar en pantalla, esa imagen chiquita se escala hasta llenar una ventana pues  mas grande (window_width x window_height), usando filtro POINT para que cada celda se vea como un bloque.
 pub const Framebuffer = struct {
     width: i32,
     height: i32,
@@ -27,24 +24,21 @@ pub const Framebuffer = struct {
         };
     }
 
-    /// La UNICA funcion para escribir en el framebuffer. Pinta la celda
-    /// (x, y) del color dado. Coordenadas fuera de la cuadricula se ignoran.
+    /// La unica funcion para escribir en el framebuffer.  que pinta la celda
+    /// (x, y) del color dado. y las coordenas fuera de la cela se ignoran
     pub fn point(self: *Framebuffer, x: i32, y: i32, color: rl.Color) void {
         if (x < 0 or y < 0 or x >= self.width or y >= self.height) return;
         rl.ImageDrawPixel(&self.image, x, y, color);
     }
 
-    /// Regresa el color actual de la celda (x, y). Fuera de rango se
-    /// considera "background_color" (equivalente a una celda muerta),
-    /// asi el algoritmo del juego puede tratar los bordes como muertos
-    /// sin tener que estar validando limites en cada llamada.
+    /// Regresa el color actual de la celda (x, y). Fuera de rango se considera "background_color" 
+    /// asi el algoritmo del juego puede tratar los bordes como muertos sin tener que estar validando limites en cada llamada.
     pub fn get_color(self: *Framebuffer, x: i32, y: i32) rl.Color {
         if (x < 0 or y < 0 or x >= self.width or y >= self.height) return self.background_color;
         return rl.GetImageColor(self.image, x, y);
     }
 
-    /// Disponible por si se necesita, pero el loop de Game of Life NO la
-    /// llama: el estado del juego vive en los pixeles del framebuffer de
+    /// Ahora bien disponible por si se necesita, pero el loop del juego no la llama, ya que  estado del juego vive en los pixels del framebuffer de
     /// un frame a otro, no en una estructura aparte.
     pub fn clear(self: *Framebuffer) void {
         rl.ImageClearBackground(&self.image, self.background_color);
