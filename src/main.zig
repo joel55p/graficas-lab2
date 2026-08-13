@@ -21,7 +21,7 @@ pub fn main() !void {
 
     var framebuffer = fb.Framebuffer.init(GRID_WIDTH, GRID_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, life.DEAD_COLOR);
 
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
@@ -31,12 +31,29 @@ pub fn main() !void {
     place_initial_pattern(&framebuffer);
 
     var time_since_step: f32 = 0;
+    // Empieza pausado: asi el primer frame que se ve es exactamente el
+    // patron inicial, sin que ya hayan corrido generaciones de mas.
+    var paused = true;
 
     while (!rl.WindowShouldClose()) {
-        time_since_step += rl.GetFrameTime();
-        if (time_since_step >= STEP_DELAY) {
+        if (rl.IsKeyPressed(rl.KEY_SPACE)) paused = !paused;
+
+        if (rl.IsKeyPressed(rl.KEY_R)) {
+            framebuffer.clear();
+            place_initial_pattern(&framebuffer);
             time_since_step = 0;
-            life.step(&framebuffer, WRAP_EDGES, scratch);
+        }
+
+        if (paused) {
+            if (rl.IsKeyPressed(rl.KEY_RIGHT)) {
+                life.step(&framebuffer, WRAP_EDGES, scratch);
+            }
+        } else {
+            time_since_step += rl.GetFrameTime();
+            if (time_since_step >= STEP_DELAY) {
+                time_since_step = 0;
+                life.step(&framebuffer, WRAP_EDGES, scratch);
+            }
         }
 
         framebuffer.swap();
@@ -47,16 +64,16 @@ fn place_initial_pattern(framebuffer: *fb.Framebuffer) void {
     const c = life.ALIVE_COLOR;
 
     org.place_block(framebuffer, 5, 5, c);
-    org.place_beehive(framebuffer, 12, 5, c);
-    org.place_boat(framebuffer, 20, 5, c);
+    org.place_beehive(framebuffer, 20, 5, c);
+    org.place_boat(framebuffer, 40, 5, c);
 
-    org.place_blinker(framebuffer, 5, 20, c);
-    org.place_toad(framebuffer, 15, 20, c);
-    org.place_beacon(framebuffer, 25, 20, c);
-    org.place_pulsar(framebuffer, 40, 15, c);
+    org.place_blinker(framebuffer, 5, 30, c);
+    org.place_toad(framebuffer, 20, 30, c);
+    org.place_beacon(framebuffer, 35, 30, c);
+    org.place_pulsar(framebuffer, 65, 35, c);
 
-    org.place_glider(framebuffer, 5, 40, c);
-    org.place_lwss(framebuffer, 20, 60, c);
+    org.place_glider(framebuffer, 5, 60, c);
+    org.place_lwss(framebuffer, 15, 90, c);
 
-    org.place_gosper_gun(framebuffer, 70, 10, c);
+    org.place_gosper_gun(framebuffer, 90, 15, c);
 }

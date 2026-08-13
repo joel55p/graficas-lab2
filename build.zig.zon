@@ -1,7 +1,7 @@
 .{
     .name = .game_of_life,
     .version = "0.0.0",
-    .fingerprint = 0x8a1e9c4b6d2f0731,
+    .fingerprint = 0x2937c9e286d4483b,
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .raylib_zig = .{
