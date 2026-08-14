@@ -48,6 +48,7 @@ Definido en `place_initial_pattern` (`src/main.zig`), con una función por organ
 ## Cómo correrlo
 
 ```bash
+git clone https://github.com/joel55p/graficas-lab2.git
 zig build run
 ```
 
